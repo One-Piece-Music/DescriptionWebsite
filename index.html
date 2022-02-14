@@ -1,0 +1,210 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Yimusic Description</title>
+    <link rel="stylesheet" href="./modest.css">
+    </head>
+  <h2 id="yimusic-a-web-based-tablature-score-editor">Yimusic: a web-based tablature score editor</h2>
+  <h3 id="brief-background-and-motivation">Brief Background and Motivation</h3>
+  <p>
+    Tablature notation is a kind of notation based on the gesture. In western music history, tablature notation is a
+    substantial part of plucked, bowed, and keyboard instruments from around the early 16<sup>th</sup> to the late
+    18<sup>th</sup>
+    century which provides the action a player must take rather than a description of the sounds (de Valk et al. 2020).
+    In Eastern music history, especially in the East Asia sphere, tablature notation systems, such as Guqin tablature
+    for instrument Guqin in China and rotsure tablature for instrument Shakuhachi in Japan, have a long history and
+    continues to the present day.
+  </p>
+  <p>
+    Unlike the number-based western tablature, Eastern tablature systems are based on characters that contain full
+    gestures of the performer and don't contain prescriptive duration and rhythm, as shown in Figure 1. However,
+    existing score editors only support the number-based tablature and don't support editing the character tablature.
+    Furthermore, this kind of notation system lets the performers be the core of the performance who has more space to
+    interpret, and gestures themself play a more important part in the performance (Chen 2020). Back to the present,
+    many newly invented digital musical instruments composers are also sharing the same values of performance with
+    eastern tablature and looking for a gesture-based editor. In this way, we decide to start from the eastern tablature
+    system, create an open-source gesture-based tablature score editor, contribute to the revival of the traditional
+    notation system, and open to the future diverse gesture-based notation system.
+  </p>
+  <figure>
+    <img src="images/figure1.png" alt="figure1" />
+    <figcaption aria-hidden="true">Figure 1. Guqin Score</figcaption>
+  </figure>
+  <h3 id="project-framework-and-goals">Project framework and Goals</h3>
+  <figure>
+    <img src="images/figure2.png" alt="figure2" />
+    <figcaption aria-hidden="true">Figure 2. Project Framework</figcaption>
+  </figure>
+  <p>
+    Our project is aimed to develop a web-based tablature editor. The editor will focus on gesture-based notation
+    systems in various cultures and times. The early stage of the project will mainly focus on realizing the
+    character-based Guqin tablature editing.
+  </p>
+  <p>
+    The whole project framework is shown in Figure 2. The user could edit the tablature on the web editor and the editor
+    could render the new score for the user. As for the web editor, it contains three parts, the control interface, the
+    typography system, and the customized Music Encoding Initiative (MEI) file generator. The MEI is the underlying file
+    format we choose to customize and structurally store the tablature music and it will be decoded for the Typography
+    System to generate the tablature. Then it will be delivered to the control interface to wait for editing. When the
+    user edits the score, the changes will go back down the flow and reflect the changes in MEI. Also, we will provide a
+    server that can store the score and let the editor retrieve the scores. The main challenges and mission of the
+    project are: customizing the Guqin tablature in MEI file, visualizing Guqin tablature characters in typography
+    system, and developing the web editor application.
+  </p>
+  <h3 id="customize-the-guqin-tablature-in-the-mei-file">Customize the Guqin tablature in the MEI file</h3>
+  <p>
+    Guqin tablature is called "Jianzi Pu (减字谱)", which uses the radicals of Chinese characters, called Jianzi, to
+    represent the corresponding gestures. Each "Puzi (谱字)", a basic unit of Jianzi Pu, contains at least left-hand
+    gesture, right-hand gesture, string number, and string position, as shown in Figure 3. Up to now, no music format
+    supports this kind of notation, but MEI provides us a chance to realize it.
+  </p>
+  <figure>
+    <img src="images/figure3.png" alt="figure3" />
+    <figcaption aria-hidden="true">Figure 3. Puzi and its meaning</figcaption>
+  </figure>
+  <p>
+    MEI (Music Encoding Initiative) (Music Encoding Initiative 2022) is a community-driven, open-source effort to define
+    a system for encoding musical documents in a machine-readable structure. It is based on eXtensible Markup Language
+    (XML) schema and supports several notation systems, including common Western music notation (CWMN), mensural
+    notation, neume notation. The main advantage of MEI is that it allows developers to customize new notation using ODD
+    (One Document Does-it-all), a part of the TEI standard. As for tablature notation, some researchers have already
+    done some research on customizing guitar and lute tablature in the MEI file (de Valk et al. 2020). Learning from
+    their experience, our workflow of this part will be:
+  </p>
+  <ul>
+    <li><p>Identify notational features specific to Guqin tablatures, such as gestures of two hands;</p></li>
+    <li>
+      <p>Figure out the requirements and make sure existing MEI elements and attributes are reused when appropriate;</p>
+    </li>
+    <li><p>Propose the module and ensure that the proposed module fits the MEI approach.</p></li>
+  </ul>
+  <p>
+    In this way, we will develop a customized MEI module for Guqin tablature notation. Also, we joined the MEI tablature
+    interesting group where we could receive the latest MEI tablature news.
+  </p>
+  <h3 id="visualize-guqin-tablature-characters-in-typography-system">
+    Visualize Guqin tablature characters in typography system
+  </h3>
+  <p>
+    As for Guqin tablature visualization, there are two challenges. The first is organizing text direction. Unlike the
+    common western musical notation, the Guqin tablature displays vertically and starts from the right side of the page
+    to the left. To implement this in the web, we decide to use Cascading Style Sheets (CSS), a language for describing
+    the style of rendered HTML web page on the screen, to facilitate the vertical and right-to-left organization of
+    Guqin symbols (CSS Working Group 2017; W3C 2019).
+  </p>
+  <p>
+    The second challenge is to create a jianzi musical notation by customizing a font file with a ligature feature. As
+    shown in Figure 3, each Puzi consists of several Jianzi characters. However, up to now, the Unicode standard has not
+    included Jianzi, so these characters cannot be directly displayed on computers. Therefore, we decide to customize a
+    font with Guqin symbols as the special "private-use characters" in Unicode (2014). Some Guqin amateurs have already
+    tried to customize the Jianzi font which could be used as a reference<a
+      href="#fn1"
+      class="footnote-ref"
+      id="fnref1"
+      role="doc-noteref"
+      ><sup>1</sup></a
+    >. In the meantime, displaying Puzi requires the ligature feature of the font. Ligature in typography means two or
+    more letters or symbols are joined into one single symbol, shown in figure 4. We decide to use The OpenType font
+    format, which supports the ligature feature, to render jianzi.
+  </p>
+  <figure>
+    <img src="images/figure4.png" alt="figure4" />
+    <figcaption aria-hidden="true">Figure 4. Ligature in alphabetic and logographic characters</figcaption>
+  </figure>
+  <h3 id="develop-the-web-editor-application">Develop the web editor application</h3>
+  <p>
+    The outer layer of the project is a web-based editor application. Previous to our project, researchers in DDMAL have
+    already developed a web-based online and open-source neume notation editor, Neon.js. It is also based on the MEI
+    file and the editing changes of the score can reflect in the MEI file (Burlet et al. 2012). This project has
+    improved to Neon2 which uses Verovio as a Javascript toolkit to reduce the latency (Regimbal et al. 2019). Our group
+    will follow the experience from the Neon project to develop ours. Our editor is decided to enable users to:
+  </p>
+  <ul>
+    <li>View, create, and edit Guqin score;</li>
+    <li>Type jianzi easily from a normal keyboard;</li>
+    <li>Export score to MEI and PDF file;</li>
+    <li>Translate a customized MEI file to its corresponding Guqin score;</li>
+    <li>Upload/download scores to/from the website.</li>
+  </ul>
+  <p>
+    To implement these features, a client-server design pattern will be used. The client (front-end) side aims to
+    provide the interface to the user, while the server (back-end) side aims to store the data and send the data to the
+    client. For the front-end service, we'll use React<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"
+      ><sup>2</sup></a
+    >, a JavaScript library for creating user interfaces, to handle user operations and provide feedback. For the
+    back-end service, we'll use a database server (e.g., PostgreSQL<a
+      href="#fn3"
+      class="footnote-ref"
+      id="fnref3"
+      role="doc-noteref"
+      ><sup>3</sup></a
+    >, MongoDB<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a
+    >, and redis<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a
+    >) to store MEI scores and send data to the front-end. The front-end and back-end are interact with an interface
+    called representational state transfer application programming interface (RESTful API).
+  </p>
+  <figure>
+    <img src="images/figure5.png" alt="figure5" />
+    <figcaption aria-hidden="true">Figure 5. The design pattern of web editor.</figcaption>
+  </figure>
+  <h3 id="future-application">Future Application</h3>
+  <p>
+    In the future, our website could be extended to an editor platform for more gesture-based tablature notation, such
+    as Shakuhachi notation and some new notations for DMIs. It can also be prepared for future tablature OMR correction
+    use. Also, it could provide a platform where the tablature community could compose and share scores. In this way, it
+    could contribute to establishing a tablature notation dataset. In the meantime, since the file would be stored in a
+    MEI file, the project could connect the whole MEI ecosystem and support conversion to other music notations.
+  </p>
+</br>
+  <h4>Reference</h4>
+  <p>
+    Burlet, Gregory, Alastair Porter, Andrew Hankinson, and Ichiro Fujinaga. 2012. "Neon.Js: Neume Editor Online." In
+    <em>Proceedings of the 13th International Society for Music Information Retrieval Conference</em> (ISMIR 2012),
+    121–26.
+  </p>
+  <p>
+    Chen, Lin. 2020. "Analysis of the Fingering Puzi of the Guqin—The 'Liangxiao Yin' as an Example."
+    <em>Chinese Music</em>, no. 3: 30–40, 168.
+  </p>
+  <p>
+    CSS Working Group. 2017. "Styling Vertical Chinese, Japanese, Korean and Mongolian Text." March 13, 2017.
+    https://www.w3.org/International/articles/vertical-text/.
+  </p>
+  <p>Music Encoding Initiative. 2022. "What Is MEI?" February 6, 2022. https://music-encoding.org/about/.</p>
+  <p>
+    Regimbal, Juliette, Zoé McLennan, Gabriel Vigliensoni, Andrew Tran, and Ichiro Fujinaga. 2019. "Neon2: A
+    Verovio-Based Square-Notation Editor." In <em>Music Encoding Conference Proceedings 2019</em>.
+  </p>
+  <p>
+    Unicode. 2014. "Private-Use Characters, Noncharacters &amp; Sentinels FAQ." October 22, 2014.
+    https://www.unicode.org/faq/private_use.html.
+  </p>
+  <p>
+    Valk, Reinier de, David Lewis, Tim Crawford, Ryaan Ahmed, Laurent Pugin, and Johannes Kepper. 2020. "Crafting
+    TabMEI, a Module for Encoding Instrumental Tablatures." In <em>Music Encoding Conference Proceedings 2020</em>,
+    75–82.
+  </p>
+  <p>W3C. 2019. "CSS Writing Modes Level 4." July 30, 2019. https://www.w3.org/TR/css-writing-modes-4/.</p>
+  <section class="footnotes footnotes-end-of-document" role="doc-endnotes">
+    <hr />
+    <ol>
+      <li id="fn1" role="doc-endnote">
+        <p>
+          https://github.com/neuralfirings/JianZiPu<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a>
+        </p>
+      </li>
+      <li id="fn2" role="doc-endnote">
+        <p>https://reactjs.org/<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p>
+      </li>
+      <li id="fn3" role="doc-endnote">
+        <p>https://www.postgresql.org/<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p>
+      </li>
+      <li id="fn4" role="doc-endnote">
+        <p>https://www.mongodb.com/<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p>
+      </li>
+      <li id="fn5" role="doc-endnote">
+        <p>https://redis.io/<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p>
+      </li>
+    </ol>
+  </section>
+</html>
